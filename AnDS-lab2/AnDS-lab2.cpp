@@ -127,23 +127,31 @@ public:
 
     void pop_head() 
     {
-        Node* tmp = head;
-        head = head->next;
-        head->prev = nullptr;
-        delete tmp;
+        if (head) {
+            Node* tmp = head;
+            head = head->next;
+            head->prev = nullptr;
+            delete tmp;
+        }else return;
     }
 
     void pop_tail()
     {
-        Node* tmp = tail;
-        tail = tail->prev;
-        tail->next = nullptr;
-        delete tmp;
+        if (tail) {
+            Node* tmp = tail;
+            tail = tail->prev;
+            tail->next = nullptr;
+            delete tmp;
+        }else return;
     }
 
     void delete_node(T val)
     {
+        if (!head) return;
+
         Node* find = find_node(val);
+        if (find == nullptr) return;
+
         Node* tmp = head;
 
         if (tmp == find)
@@ -156,14 +164,20 @@ public:
             {
                 if (tmp->next == find)
                 {
-                    tmp->next = find->next;
-                    find->next->prev = tmp;
+                    if (find->next) {
+                        tmp->next = find->next;
+                        find->next->prev = tmp;
+                    }
+                    else {
+                        tmp->next = nullptr;
+                    }
                     delete find;
-                    return;
+                    break;
                 }
                 tmp = tmp->next;
             }
         }
+        delete_node(val);
     }
 
     template <class U>
@@ -237,7 +251,7 @@ int main() {
     l1.pop_head();
     std::cout << l1 << "\n";
     l1.pop_tail();
-    std::cout << l1 << "\n";
+    std::cout << l1 << "\n\n";
 
     DoublyLinkedList<int> l2;
     l2.push_back(1);
@@ -245,8 +259,12 @@ int main() {
     l2.push_back(0);
     l2.push_back(0);
     l2.push_back(0);
+    l2.push_back(1);
 
     std::cout << l1.sum(l2) << "\n";
-    std::cout << l1.composition(l2) << "\n";
+    std::cout << l1.composition(l2) << "\n\n";
+
+    l2.delete_node(0);
+    std::cout << l2 << "\n";
     return 0;
 }
